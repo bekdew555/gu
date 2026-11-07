@@ -1,0 +1,72 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "ganyu.moc3",
+		"Textures": [
+			"ganyu.2048/texture_00.png",
+			"ganyu.2048/texture_01.png"
+		],
+		"DisplayInfo": "ganyu.cdi3.json",
+		"Motions": {
+			"Idle": [
+				{
+					"File": "breath.motion3.json"
+				},
+				{
+					"File": "hairswing.motion3.json"
+				}
+			],
+			"BreastTouch": [
+				{
+					"File": "breasttouch_start.motion3.json"
+				},
+				{
+					"File": "breasttouchloop.motion3.json"
+				}
+			],
+			"FingerTouch": [
+				{
+					"File": "fingertouchstart.motion3.json"
+				},
+				{
+					"File": "fingertouchloop.motion3.json"
+				}
+			],
+			"Sex": [
+				{
+					"File": "sexstart.motion3.json"
+				},
+				{
+					"File": "sexloop.motion3.json"
+				}
+			],
+			"Climax": [
+				{
+					"File": "gaochao.motion3.json"
+				}
+			],
+			"Cum": [
+				{
+					"File": "shejing.motion3.json"
+				}
+			],
+			"Mouth": [
+				{
+					"File": "mouthmove.motion3.json"
+				}
+			]
+		}
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": []
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	]
+}

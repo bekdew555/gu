@@ -1,0 +1,128 @@
+{
+	"Version": 3,
+	"Parameters": [
+		{
+			"Id": "Param",
+			"GroupId": "",
+			"Name": "ParamBra"
+		},
+		{
+			"Id": "Param12",
+			"GroupId": "",
+			"Name": "Paramhairswing"
+		},
+		{
+			"Id": "Param9",
+			"GroupId": "",
+			"Name": "ParamTouch"
+		},
+		{
+			"Id": "Param10",
+			"GroupId": "",
+			"Name": "ParamTouchX"
+		},
+		{
+			"Id": "Param7",
+			"GroupId": "",
+			"Name": "ParamMouthOpenY"
+		},
+		{
+			"Id": "Param19",
+			"GroupId": "",
+			"Name": "ParamSexMove"
+		},
+		{
+			"Id": "Param13",
+			"GroupId": "",
+			"Name": "Parammosaic"
+		},
+		{
+			"Id": "Param20",
+			"GroupId": "",
+			"Name": "Paramfingersexmove"
+		},
+		{
+			"Id": "Param3",
+			"GroupId": "",
+			"Name": "ParamEyeOpen"
+		},
+		{
+			"Id": "Param6",
+			"GroupId": "",
+			"Name": "ParamMouthState"
+		},
+		{
+			"Id": "Param5",
+			"GroupId": "",
+			"Name": "Parambell"
+		},
+		{
+			"Id": "Param2",
+			"GroupId": "",
+			"Name": "ParamSock"
+		},
+		{
+			"Id": "Param4",
+			"GroupId": "",
+			"Name": "ParamOutfit"
+		},
+		{
+			"Id": "Param8",
+			"GroupId": "",
+			"Name": "Paramcheck"
+		},
+		{
+			"Id": "Param11",
+			"GroupId": "",
+			"Name": "ParamBreath"
+		},
+		{
+			"Id": "Param15",
+			"GroupId": "",
+			"Name": "Paramdick"
+		},
+		{
+			"Id": "Param14",
+			"GroupId": "",
+			"Name": "Paramhand"
+		},
+		{
+			"Id": "Param16",
+			"GroupId": "",
+			"Name": "Paramfinger"
+		},
+		{
+			"Id": "Param17",
+			"GroupId": "",
+			"Name": "Paramleg"
+		},
+		{
+			"Id": "Param18",
+			"GroupId": "",
+			"Name": "Paramsexpose"
+		}
+	],
+	"ParameterGroups": [],
+	"Parts": [
+		{
+			"Id": "Part5",
+			"Name": "马赛克.psd"
+		},
+		{
+			"Id": "Part4",
+			"Name": "甘雨live2d最终fz.psd"
+		},
+		{
+			"Id": "Part3",
+			"Name": "甘雨live2d最终.psd"
+		},
+		{
+			"Id": "Part2",
+			"Name": "甘雨live2doutfitgai.psd"
+		},
+		{
+			"Id": "Part",
+			"Name": "甘雨live2d躺嘴和腮红.psd"
+		}
+	]
+}

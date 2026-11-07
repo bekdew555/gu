@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ganyu Live2D H Demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d0d12;
+      color: #eee;
+      font-family: system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #header {
+      padding: 10px 16px;
+      background: #16161e;
+      border-bottom: 1px solid #2a2a35;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    #header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #a0c4ff;
+    }
+    #status {
+      font-size: 13px;
+      color: #888;
+    }
+    #canvas-wrap {
+      flex: 1;
+      position: relative;
+      background: radial-gradient(ellipse at center, #1a1a28 0%, #0a0a10 100%);
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    #controls {
+      padding: 12px 16px;
+      background: #16161e;
+      border-top: 1px solid #2a2a35;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .btn {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      background: #2a2a40;
+      color: #eee;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #3a3a55; }
+    .btn.active { background: #4a6fa5; }
+    .btn.danger { background: #5a2a3a; }
+    .btn.danger:hover { background: #7a3a4a; }
+    .btn.primary { background: #2a4a6a; }
+    .btn.primary:hover { background: #3a5a8a; }
+    .group-label {
+      width: 100%;
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    #loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0d0d12;
+      z-index: 10;
+      font-size: 18px;
+      color: #a0c4ff;
+    }
+    #error {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: #1a0a0a;
+      color: #ff8a8a;
+      padding: 40px;
+      z-index: 20;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 13px;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>Ganyu Live2D H Demo</h1>
+    <span id="status">กำลังโหลด...</span>
+  </div>
+
+  <div id="canvas-wrap">
+    <div id="loading">กำลังโหลดโมเดล... กรุณารอสักครู่</div>
+    <div id="error"></div>
+  </div>
+
+  <div id="controls">
+    <div class="group-label">ท่าทาง / Motion</div>
+    <button class="btn primary" data-motion="BreastTouch">แตะหน้าอก</button>
+    <button class="btn primary" data-motion="FingerTouch">ใช้นิ้ว</button>
+    <button class="btn danger" data-motion="Sex">Sex</button>
+    <button class="btn danger" data-motion="Climax">高潮 (Climax)</button>
+    <button class="btn danger" data-motion="Cum">射精</button>
+    <button class="btn" data-motion="Mouth">ปาก</button>
+    <button class="btn" data-motion="Idle">Idle / Breath</button>
+
+    <div class="group-label">Parameter ควบคุมด้วยมือ</div>
+    <button class="btn" data-param="ParamOutfit" data-value="1">ถอดเสื้อผ้า</button>
+    <button class="btn" data-param="ParamOutfit" data-value="0">ใส่เสื้อผ้า</button>
+    <button class="btn" data-param="ParamBra" data-value="1">ถอดบรา</button>
+    <button class="btn" data-param="ParamSock" data-value="1">ถอดถุงน่อง</button>
+    <button class="btn" data-param="Paramsexpose" data-value="1">เปิดเผย</button>
+    <button class="btn" data-param="Paramdick" data-value="1">โชว์ dick</button>
+    <button class="btn" data-param="Parammosaic" data-value="1">โมเสก ON</button>
+    <button class="btn" data-param="Parammosaic" data-value="0">โมเสก OFF</button>
+    <button class="btn" data-param="ParamEyeOpen" data-value="0">หลับตา</button>
+    <button class="btn" data-param="ParamEyeOpen" data-value="1">ลืมตา</button>
+  </div>
+
+  <!-- Cubism Core (official) -->
+  <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+  <!-- PixiJS -->
+  <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.3.2/dist/pixi.min.js"></script>
+  <!-- pixi-live2d-display (Cubism 4) -->
+  <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.5.0-beta/dist/cubism4.min.js"></script>
+
+  <script>
+    const { Application, Ticker } = PIXI;
+    const { Live2DModel } = PIXI.live2d;
+
+    let model = null;
+    let app = null;
+
+    async function main() {
+      const statusEl = document.getElementById('status');
+      const loadingEl = document.getElementById('loading');
+      const errorEl = document.getElementById('error');
+      const canvasWrap = document.getElementById('canvas-wrap');
+
+      try {
+        app = new Application({
+          backgroundAlpha: 0,
+          resizeTo: canvasWrap,
+          antialias: true,
+          resolution: Math.min(window.devicePixelRatio || 1, 2),
+          autoDensity: true,
+        });
+        canvasWrap.appendChild(app.view);
+
+        // โหลดโมเดล
+        model = await Live2DModel.from('./ganyu.model3.json', {
+          autoInteract: false,   // เราจะควบคุมเอง
+          autoUpdate: true,
+        });
+
+        // จัดตำแหน่งและขนาด
+        const scale = Math.min(
+          (app.screen.width * 0.85) / model.width,
+          (app.screen.height * 0.95) / model.height
+        );
+        model.scale.set(scale);
+        model.anchor.set(0.5, 0.5);
+        model.x = app.screen.width / 2;
+        model.y = app.screen.height / 2 + 40;
+
+        app.stage.addChild(model);
+
+        // เริ่ม idle
+        try {
+          model.motion('Idle', 0, 2);
+        } catch (e) {}
+
+        loadingEl.style.display = 'none';
+        statusEl.textContent = 'พร้อมเล่น · คลิกปุ่มด้านล่าง';
+
+        // ปุ่ม Motion
+        document.querySelectorAll('[data-motion]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const group = btn.dataset.motion;
+            // เล่น motion กลุ่มนั้น (index 0 ก่อน แล้ว loop ถ้ามี)
+            try {
+              model.motion(group, 0, 3); // priority 3 = force
+              statusEl.textContent = 'เล่น: ' + group;
+            } catch (err) {
+              console.warn(err);
+              statusEl.textContent = 'ไม่พบ motion: ' + group;
+            }
+          });
+        });
+
+        // ปุ่ม Parameter
+        document.querySelectorAll('[data-param]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.param;
+            const value = parseFloat(btn.dataset.value);
+            try {
+              // วิธีตั้งค่า parameter ใน pixi-live2d-display
+              const coreModel = model.internalModel.coreModel;
+              const paramIndex = coreModel.getParameterIndex(id);
+              if (paramIndex >= 0) {
+                coreModel.setParameterValueByIndex(paramIndex, value);
+                statusEl.textContent = id + ' = ' + value;
+              } else {
+                // fallback ชื่อ
+                coreModel.setParameterValueById(id, value);
+                statusEl.textContent = id + ' = ' + value;
+              }
+            } catch (err) {
+              console.warn('set param failed', id, err);
+              statusEl.textContent = 'ตั้งค่า ' + id + ' ไม่สำเร็จ';
+            }
+          });
+        });
+
+        // ปรับขนาดเมื่อ resize
+        window.addEventListener('resize', () => {
+          if (!model) return;
+          const s = Math.min(
+            (app.screen.width * 0.85) / model.width,
+            (app.screen.height * 0.95) / model.height
+          );
+          model.scale.set(s);
+          model.x = app.screen.width / 2;
+          model.y = app.screen.height / 2 + 40;
+        });
+
+      } catch (err) {
+        console.error(err);
+        loadingEl.style.display = 'none';
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'เกิดข้อผิดพลาด:\n\n' + err.message + '\n\n' + (err.stack || '');
+        statusEl.textContent = 'โหลดล้มเหลว';
+      }
+    }
+
+    // รอให้ Cubism Core พร้อม
+    if (window.Live2DCubismCore) {
+      main();
+    } else {
+      window.addEventListener('load', main);
+    }
+  </script>
+</body>
+</html>
